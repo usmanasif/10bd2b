@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import BlogPost from "./BlogPost";
 import Pagination from "./Pagination";
 import React from "react";
@@ -6,17 +7,29 @@ import blogs from "../data/blogs.json";
 const PAGE_SIZES = [15, 25, 50, 100];
 
 function BlogList() {
-  const currentPaginationData = blogs.posts.slice(0, 15);
 
-  const updateRowsPerPage = () => {};
-  const updatePage = () => {};
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
+  const [currentPaginationData, setCurrentPaginationData] = useState(blogs.posts.slice(0, pageSize))
+
+  const updateRowsPerPage = (newValue) => {
+    if (PAGE_SIZES.includes(newValue)) {
+      setPageSize(newValue);
+      setCurrentPage(1);
+      setCurrentPaginationData(blogs.posts.slice(0, newValue));
+    }
+  };
+  const updatePage = (newValue) => {
+    setCurrentPage(newValue);
+    setCurrentPaginationData(blogs.posts.slice((newValue - 1) * pageSize, newValue * pageSize));
+  };
 
   return (
     <div>
       <Pagination
-        currentPage={1}
+        currentPage={currentPage}
         totalCount={blogs.posts.length}
-        pageSize={15}
+        pageSize={pageSize}
         pageSizeOptions={PAGE_SIZES}
         onPageChange={updatePage}
         onPageSizeOptionChange={updateRowsPerPage}
